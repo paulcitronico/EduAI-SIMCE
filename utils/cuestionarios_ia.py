@@ -10,7 +10,7 @@ import os
 # Configuración del cliente de NVIDIA
 client = OpenAI(
     base_url="https://integrate.api.nvidia.com/v1",
-    api_key="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"
+    api_key="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"
 )
 
 # Función para extraer texto del PDF
@@ -80,6 +80,8 @@ def generate_questions(text, num_questions, file_info):
         temperature=0.2,
         top_p=0.7,
         max_tokens=8192,
+        frequency_penalty=0,
+        presence_penalty=0,
         extra_body={"chat_template_kwargs": {"thinking": True}},
         stream=True
     )
@@ -126,10 +128,12 @@ def generate_feedback(questions, user_answers):
         prompt += f"Respuesta del usuario: {user_answers[i]}\n\n"
     
     completion = client.chat.completions.create(
-        model="deepseek-ai/deepseek-v3.1",
+        model="nvidia/nvidia-nemotron-nano-9b-v2",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2,
         top_p=0.7,
+        frequency_penalty=0,
+        presence_penalty=0,
         max_tokens=8192,
         extra_body={"chat_template_kwargs": {"thinking": True}},
         stream=True

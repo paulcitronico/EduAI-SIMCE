@@ -346,21 +346,48 @@ def obtener_secciones(categoria=None, profesor_id=None):
         conn.close()
 
 def eliminar_seccion(seccion_id):
+    """
+    Elimina una sección y mueve sus archivos a 'Sin sección'
+    
+    Args:
+        seccion_id: ID de la sección a eliminar
+        
+    Returns:
+        tuple: (success, message) donde success es un booleano y message es un string
+    """
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
     try:
+        # Verificar si la sección existe
+        c.execute("SELECT nombre FROM secciones WHERE id = ?", (seccion_id,))
+        seccion = c.fetchone()
+        
+        if not seccion:
+            conn.close()
+            return False, "La sección no existe"
+        
+        nombre_seccion = seccion[0]
+        
+        # Contar cuántos archivos están en esta sección
         c.execute("SELECT COUNT(*) FROM archivos WHERE seccion_id = ?", (seccion_id,))
         count = c.fetchone()[0]
         
         if count > 0:
+            # Actualizar los archivos para que no tengan sección (seccion_id = NULL)
             c.execute("UPDATE archivos SET seccion_id = NULL WHERE seccion_id = ?", (seccion_id,))
-        
+            
+        # Eliminar la sección
         c.execute("DELETE FROM secciones WHERE id = ?", (seccion_id,))
         conn.commit()
-        return True
+        
+        mensaje = f"Sección '{nombre_seccion}' eliminada exitosamente"
+        if count > 0:
+            mensaje += f". {count} archivos movidos a 'Sin sección'"
+            
+        return True, mensaje
     except Exception as e:
         print(f"Error al eliminar sección: {str(e)}")
-        return False
+        return False, f"Error al eliminar sección: {str(e)}"
     finally:
         conn.close()
 
@@ -432,4 +459,3 @@ def listar_estudiantes_inscritos():
                 file_name="listado_alumnos.csv",
                 mime="text/csv"
             )
-

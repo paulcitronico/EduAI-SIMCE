@@ -8,7 +8,7 @@ PAGE_LAYOUT = "wide"
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 SMTP_USERNAME = "jeanpachecotesista@gmail.com"
-SMTP_PASSWORD = "ecea gcpe ygqw nyal"
+SMTP_PASSWORD = "choh mzls eioy wnsn"
 
 # Directorios
 USER_IMAGES_DIR = "user_images"

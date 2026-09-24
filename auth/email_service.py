@@ -13,7 +13,9 @@ def send_email(to_email, subject, body):
         msg.attach(MIMEText(body, 'plain'))
         
         server = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
         server.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
         text = msg.as_string()
         server.sendmail(config.SMTP_USERNAME, to_email, text)

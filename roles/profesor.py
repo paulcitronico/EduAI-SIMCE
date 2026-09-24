@@ -73,7 +73,7 @@ def mostrar_unidades_con_secciones():
                     with st.form(f"form_subir_{seccion_id}"):
                         uploaded_files = st.file_uploader(
                             f"Subir archivos a {nombre_seccion}", 
-                            type=["pdf", "docx", "pptx", "jpg", "png", "jpeg"], 
+                            type=["pdf"], 
                             accept_multiple_files=True,
                             key=f"uploader_{seccion_id}"
                         )
@@ -86,13 +86,29 @@ def mostrar_unidades_con_secciones():
                             st.rerun()
                 
                 with col2:
-                    if seccion[0] == profesor_id:
-                        if st.button(f"Eliminar Sección", key=f"eliminar_seccion_{seccion_id}"):
-                            if eliminar_seccion(seccion_id):
-                                st.success(f"Sección '{nombre_seccion}' eliminada exitosamente")
-                                st.rerun()
-                            else:
-                                st.error("Error al eliminar la sección")
+                    # --- ZONA DE ELIMINACIÓN CORREGIDA ---
+                    st.subheader("Eliminar Sección")
+                    st.write("⚠️ Esta acción eliminará la sección y moverá sus archivos a 'Sin sección'.")
+                    
+                    # Checkbox para confirmar
+                    confirmar_eliminacion = st.checkbox(
+                        f"Sí, confirmo que quiero eliminar '{nombre_seccion}'",
+                        key=f"confirm_check_{seccion_id}"
+                    )
+                    
+                    # Botón de eliminación, deshabilitado si no se confirma
+                    if st.button(
+                        "🗑️ Eliminar Sección Definitivamente", 
+                        key=f"eliminar_seccion_{seccion_id}",
+                        disabled=not confirmar_eliminacion,
+                        type="secondary" # Estilo menos agresivo
+                    ):
+                        success, message = eliminar_seccion(seccion_id)
+                        if success:
+                            st.success(message)
+                            st.rerun()
+                        else:
+                            st.error(message)
                 
                 if seccion_id in archivos_por_seccion and archivos_por_seccion[seccion_id]:
                     st.subheader(f"Archivos en {nombre_seccion}")
@@ -145,11 +161,12 @@ def mostrar_unidades_con_secciones():
                                     st.error("Error al mover el archivo")
                             
                             if st.button("Eliminar Archivo", key=f"eliminar_archivo_{arch_id}"):
-                                if eliminar_archivo(arch_id):
-                                    st.success("Archivo eliminado exitosamente")
+                                success, message = eliminar_archivo(arch_id)
+                                if success:
+                                    st.success(message)
                                     st.rerun()
                                 else:
-                                    st.error("Error al eliminar el archivo")
+                                    st.error(message)
                 else:
                     st.info(f"No hay archivos en {nombre_seccion}")
                 
@@ -206,11 +223,12 @@ def mostrar_unidades_con_secciones():
                             st.error("Error al mover el archivo")
                     
                     if st.button("Eliminar Archivo", key=f"eliminar_archivo_{arch_id}"):
-                        if eliminar_archivo(arch_id):
-                            st.success("Archivo eliminado exitosamente")
+                        success, message = eliminar_archivo(arch_id)
+                        if success:
+                            st.success(message)
                             st.rerun()
                         else:
-                            st.error("Error al eliminar el archivo")
+                            st.error(message)
 
 
 def mostrar_revisiones():

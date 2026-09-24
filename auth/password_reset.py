@@ -33,7 +33,7 @@ def generate_reset_token(email):
     Hemos recibido una solicitud para restablecer tu contraseña.
     
     Para continuar, haz clic en el siguiente enlace o copia y pégalo en tu navegador:
-    http://localhost:8501/?reset_token={token}
+    https://0xmx6v4p-8501.brs.devtunnels.ms/?reset_token={token}
     
     Este enlace expirará en 1 hora.
     
